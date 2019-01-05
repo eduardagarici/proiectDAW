@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using proiectDAW.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,7 +12,7 @@ namespace proiectDAW.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            return View(); 
         }
 
         public ActionResult About()
