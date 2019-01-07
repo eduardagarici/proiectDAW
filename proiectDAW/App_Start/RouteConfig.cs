@@ -19,6 +19,12 @@ namespace proiectDAW
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+            "NewTask",                                              // Route name
+            "Task/New/{id}/{task}",                           // URL with parameters
+            new {  task = UrlParameter.Optional, id = UrlParameter.Optional }  // Parameter defaults
+        );
         }
     }
 }

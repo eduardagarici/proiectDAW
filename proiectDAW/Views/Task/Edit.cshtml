@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+@Styles.Render("~/Content/newStyle.css")
+@*<form method="post" action="/Task/Edit/@Model.ProjectTaskId">
+        @Html.HttpMethodOverride(HttpVerbs.Put)
+        <label>Titlu</label>
+        <br />
+        <input type="text" name="Name" value="@Model.Name" />
+        <br /><br />
+        <label>Continut</label>
+        <br />
+        <input type="text" name="Description" value="@Model.Description" />
+        <br /><br />
+        <label>Data</label>
+        <br />
+        <input type="date" name="DeadLine" value="@Model.DeadLine" />
+        <br />
+        <button type="submit">Modifica stire</button>
+    </form>*@
+
+
+<div class="container">
+    <div class="col-md-5">
+        <div class="form-area">
+            <form role="form" method="post" action="/Task/Edit/@Model.ProjectTaskId">
+                @Html.HttpMethodOverride(HttpVerbs.Put)
+                <br style="clear:both">
+                <h3 style="margin-bottom: 25px; text-align: center;">Task Form</h3>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" id="Name" name="Name" placeholder="Name" value="@Model.Name" required>
+                </div>
+                <div class="form-group">
+                    <label>Deadline</label>
+                    <input type="date" class="form-control" id="DeadLine" name="DeadLine" placeholder="Deadline" value="@Model.DeadLine" required>
+                </div>
+                <div class="form-group">
+                    <label>End date</label>
+                    <input type="date" class="form-control" id="EndDate" name="EndDate" placeholder="EndDate" value="@Model.EndDate" required>
+                </div>
+                <div class="form-group">
+                    <select name="Priority">
+                        <option value="0">Low</option>
+                        <option value="1">Medium</option>
+                        <option value="2">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Task Description</label>
+                    <textarea class="form-control" type="textarea" id="Description" name="Description" placeholder="Description" maxlength="140" rows="7">@Model.Description</textarea>
+                    <span class="help-block"><p id="characterLeft" class="help-block ">You have reached the limit</p></span>
+                </div>
+
+                <button type="submit" id="submit" name="submit" class="btn btn-primary pull-right">Submit Task</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/Scripts/newJs.js")}

@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "Assign";
+}
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+@Styles.Render("~/Content/newStyle.css")
+<h2>Assign</h2>
+
+<h3>@ViewBag.invalidUser</h3>
+<div class="container">
+    <div class="col-md-5">
+        <div class="form-area">
+            <form role="form" method="post" action="/Task/Assign/@ViewBag.TaskID/">
+                <br style="clear:both">
+                <h3 style="margin-bottom: 25px; text-align: center;">Task Form</h3>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" id="Name" name="Name" placeholder="Name" required>
+                </div>
+                <button type="submit" id="submit" name="submit" class="btn btn-primary pull-right">Assign Task</button>
+            </form>
+        </div>
+    </div>
+</div>

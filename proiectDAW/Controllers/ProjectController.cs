@@ -17,7 +17,7 @@ namespace proiectDAW.Controllers
         public static int inviteAvailability = 7;
 
         // GET: Project
-        [Authorize(Roles =("Member,Organizer,Administrator"))]
+        [Authorize(Roles = ("Member,Organizer,Administrator"))]
         public ActionResult Index(string searchParam = "")
         {
             if (TempData.ContainsKey("edit"))
@@ -36,12 +36,12 @@ namespace proiectDAW.Controllers
             if (User.IsInRole("Administrator"))
             {
                 var projects = (from project in db.Projects
-                               orderby project.Status
-                               select project).ToList();
-                if(searchParam != "")
+                                orderby project.Status
+                                select project).ToList();
+                if (searchParam != "")
                 {
-                   var projectList = projects.Where(e => e.Name.Contains(searchParam) || e.Owner.Email.Contains(searchParam));
-                   return View(projectList.ToList());
+                    var projectList = projects.Where(e => e.Name.Contains(searchParam) || e.Owner.Email.Contains(searchParam));
+                    return View(projectList.ToList());
                 }
                 return View(projects);
             }
@@ -66,62 +66,62 @@ namespace proiectDAW.Controllers
 
         [Authorize(Roles = "Member,Organizer,Administrator")]
         [HttpPost]
-        public ActionResult New(Project project, string Member1,string Member2,string Member3)
+        public ActionResult New(Project project, string Member1, string Member2, string Member3)
         {
-              try
-              {
-                  if (ModelState.IsValid)
-                  {
-                      UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
-                      var oldUser = UserManager.FindById(User.Identity.GetUserId());
-                      var oldRoleId = oldUser.Roles.SingleOrDefault().RoleId;
-                      var oldRoleName = db.Roles.SingleOrDefault(r => r.Id == oldRoleId).Name;
-                      if (oldRoleName != "Administrator" && oldRoleName != "Organizer")
-                      {
-                          UserManager.RemoveFromRole(User.Identity.GetUserId(), oldRoleName);
-                          UserManager.AddToRole(User.Identity.GetUserId(), "Organizer");
-                      } 
-                      var user = UserManager.FindById(User.Identity.GetUserId());
-                      project.StartDate = DateTime.Now;
-                      project.EndDate = DateTime.Now;
-                      project.UserId = User.Identity.GetUserId();
-                      project.Owner = user;
-                      project.Status = Enums.ProjectStatus.Incompleted;
-                      if (project.TeamMembers == null)
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+                    var oldUser = UserManager.FindById(User.Identity.GetUserId());
+                    var oldRoleId = oldUser.Roles.SingleOrDefault().RoleId;
+                    var oldRoleName = db.Roles.SingleOrDefault(r => r.Id == oldRoleId).Name;
+                    if (oldRoleName != "Administrator" && oldRoleName != "Organizer")
+                    {
+                        UserManager.RemoveFromRole(User.Identity.GetUserId(), oldRoleName);
+                        UserManager.AddToRole(User.Identity.GetUserId(), "Organizer");
+                    }
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    project.StartDate = DateTime.Now;
+                    project.EndDate = DateTime.Now;
+                    project.UserId = User.Identity.GetUserId();
+                    project.Owner = user;
+                    project.Status = Enums.ProjectStatus.Incompleted;
+                    if (project.TeamMembers == null)
                         project.TeamMembers = new HashSet<ApplicationUser>();
-                      project.TeamMembers.Add(user);
-                      db.Projects.Add(project);
-                      db.SaveChanges();
-                      return RedirectToAction("Index");
-                  }
-                  else
-                  {
-                      return View(project);
-                  }
-              }
-              catch (Exception e)
-              {
+                    project.TeamMembers.Add(user);
+                    db.Projects.Add(project);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View(project);
+                }
+            }
+            catch (Exception e)
+            {
 
-                  return Content(e.InnerException.Message);
-              }
+                return Content(e.InnerException.Message);
+            }
         }
         [Authorize(Roles = "Organizer,Administrator")]
         public ActionResult Edit(int id)
         {
             Project project = db.Projects.Find(id);
-            if(project.UserId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
+            if (project.UserId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
                 return View(project);
             TempData["access"] = "You do not have permission to edit the selected project";
             return RedirectToAction("Index");
         }
 
         [HttpPut]
-        [Authorize(Roles ="Organizer,Administrator")]
+        [Authorize(Roles = "Organizer,Administrator")]
         public ActionResult Edit(int id, Project requestProject)
         {
             try
             {
-               
+
                 if (ModelState.IsValid)
                 {
                     Project project = db.Projects.Find(id);
@@ -130,7 +130,7 @@ namespace proiectDAW.Controllers
                         project.Name = requestProject.Name;
                         project.Deadline = requestProject.Deadline;
                         project.Description = requestProject.Description;
-                        project.Status = requestProject.Status;  
+                        project.Status = requestProject.Status;
                         db.SaveChanges();
                         TempData["edit"] = "Project " + project.Name + " was edited succesfully";
                     }
@@ -147,7 +147,7 @@ namespace proiectDAW.Controllers
             }
         }
         [HttpDelete]
-        [Authorize(Roles ="Organizer,Administrator")]
+        [Authorize(Roles = "Organizer,Administrator")]
         public ActionResult Delete(int id)
         {
             Project project = db.Projects.Find(id);
@@ -156,7 +156,7 @@ namespace proiectDAW.Controllers
             {
                 try
                 {
-                    
+
                     TempData["delete"] = "Project " + project.Name + " was successfully deleted";
                     var user = UserManager.FindById(project.UserId);
                     user.Projects.Remove(project);
@@ -164,7 +164,7 @@ namespace proiectDAW.Controllers
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
 
                 }
@@ -219,7 +219,7 @@ namespace proiectDAW.Controllers
                 project.TeamMembers.Remove(user);
                 db.SaveChanges();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
 
             }
@@ -227,7 +227,7 @@ namespace proiectDAW.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles ="Organizer,Administrator")]
+        [Authorize(Roles = "Organizer,Administrator")]
         [Route("Project/{projectId}/AddMember")]
         public ActionResult AddMember(int projectId, string member)
         {
@@ -240,7 +240,8 @@ namespace proiectDAW.Controllers
                     TempData["access"] = "You are not allowed to add members";
                     return RedirectToAction("ViewTeam", new { id = projectId });
                 }
-                if (IsValidEmailAddress(member)) {
+                if (IsValidEmailAddress(member))
+                {
                     UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
                     var user = UserManager.FindById(User.Identity.GetUserId());
                     var invitedMember = UserManager.FindByEmail(member);
@@ -249,14 +250,14 @@ namespace proiectDAW.Controllers
                         TempData["already"] = "The provided person is already a member in the project";
                         return RedirectToAction("ViewTeam", new { id = projectId });
                     }
-                    foreach(var inv in project.Invites)
+                    foreach (var inv in project.Invites)
                     {
-                        if(inv.Invited == invitedMember)
+                        if (inv.Invited == invitedMember)
                             TempData["alreadyInvited"] = "The provided person is already invited in the project";
                         return RedirectToAction("ViewTeam", new { id = projectId });
                     }
-                    
-                    if(invitedMember == null)
+
+                    if (invitedMember == null)
                     {
                         TempData["noUser"] = "There is no user associated with the provided email";
                         return RedirectToAction("ViewTeam", new { id = projectId });
@@ -280,20 +281,44 @@ namespace proiectDAW.Controllers
                     TempData["email"] = "Invalid email";
                     return RedirectToAction("ViewTeam", new { id = projectId });
 
-                }
-            }
+        [Authorize(Roles = "Member,Organizer,Administrator")]
+        [HttpGet]
+        public ActionResult Show(int id)
+        {
+            Session["projectName"] = db.Projects.Find(id).Name;
+            Session["projectId"] = id;
+            var proj = db.Tasks;
+            var tasks = (from p in proj
+                         where p.ProjectId == id
+                         select p).ToList();
+            return View(tasks);
+        }
+    }
+}
             catch (Exception e)
             {
 
             }
             return RedirectToAction("ViewTeam", new { id = projectId });
         }
-        [NonAction]
-        private static bool IsValidEmailAddress(string emailAddress)
-        {
-            return new System.ComponentModel.DataAnnotations
-                                .EmailAddressAttribute()
-                                .IsValid(emailAddress);
-        }
+    [Authorize(Roles = "Member,Organizer,Administrator")]
+[HttpGet]
+public ActionResult Show(int id)
+{
+    Session["projectName"] = db.Projects.Find(id).Name;
+    Session["projectId"] = id;
+    var proj = db.Tasks;
+    var tasks = (from p in proj
+                 where p.ProjectId == id
+                 select p).ToList();
+    return View(tasks);
+}
+[NonAction]
+private static bool IsValidEmailAddress(string emailAddress)
+{
+    return new System.ComponentModel.DataAnnotations
+                        .EmailAddressAttribute()
+                        .IsValid(emailAddress);
+}
     }
 }
