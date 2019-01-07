@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit Comment</h2>
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+@Styles.Render("~/Content/newStyle.css")
+
+
+<div class="container">
+    <div class="col-md-5">
+        <div class="form-area">
+            <form role="form" method="post" action="/Comment/Edit/@Model.CommentId">
+                @Html.HttpMethodOverride(HttpVerbs.Put)
+                <br style="clear:both">
+                <h3 style="margin-bottom: 25px; text-align: center;">Task Form</h3>
+                <div class="form-group">
+                    <label>Insert your comment</label>
+                    <textarea class="form-control" type="textarea" id="Text" name="Text" placeholder="@Model.Text" maxlength="140" rows="7">@Model.Text</textarea>
+                    <span class="help-block"><p id="characterLeft" class="help-block ">You have reached the limit</p></span>
+                </div>
+                <button type="submit" id="submit" name="submit" class="btn btn-primary pull-right">Submit Comment</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/Scripts/newJs.js")}
+
+

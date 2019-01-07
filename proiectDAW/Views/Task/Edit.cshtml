@@ -46,7 +46,14 @@
                     <input type="date" class="form-control" id="EndDate" name="EndDate" placeholder="EndDate" value="@Model.EndDate" required>
                 </div>
                 <div class="form-group">
-                    <select name="Priority">
+                    <select class="form-control" name="Status">
+                        <option value="0">Not Started</option>
+                        <option value="1">In process</option>
+                        <option value="2">Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select class="form-control" name="Priority">
                         <option value="0">Low</option>
                         <option value="1">Medium</option>
                         <option value="2">High</option>
