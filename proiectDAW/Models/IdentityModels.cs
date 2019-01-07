@@ -19,6 +19,10 @@ namespace proiectDAW.Models
             return userIdentity;
         }
         public IEnumerable<SelectListItem> AllRoles { get; set; }
+        public virtual ICollection<Project> Projects { get; set; }
+        public virtual ICollection<ProjectTask> Tasks { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Invite> Invites { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -35,6 +39,16 @@ namespace proiectDAW.Models
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
+        }
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            //Configure default schema
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Project>()
+                .HasRequired(n => n.Owner)
+                .WithMany(a => a.Projects)
+                .HasForeignKey(n => n.UserId)
+                .WillCascadeOnDelete(false);
         }
     }
 }

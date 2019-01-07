@@ -9,18 +9,27 @@ using System.Web.Mvc;
 
 namespace proiectDAW.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class UsersController : Controller
     {
         private ApplicationDbContext db = ApplicationDbContext.Create();
         // GET: Users
+ 
         public ActionResult Index()
         {
             var users = from user in db.Users
                         orderby user.UserName
                         select user;
-            ViewBag.UsersList = users;
-            return View();
-        }        public ActionResult Edit(string id)
+            List<string> roles = new List<string>();
+            foreach (var user in users)
+            {
+                roles.Add(user.Roles.FirstOrDefault().ToString());
+            }
+            ViewBag.Roles = roles;
+            return View(users.ToList());
+        }
+
+        public ActionResult Edit(string id)
         {
             ApplicationUser user = db.Users.Find(id);
             user.AllRoles = GetAllRoles();
@@ -42,7 +51,9 @@ namespace proiectDAW.Controllers
                 });
             }
             return selectList;
-        }        [HttpPut]
+        }
+
+        [HttpPut]
         public ActionResult Edit(string id, ApplicationUser newData)
         {
 

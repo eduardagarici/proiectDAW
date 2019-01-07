@@ -1,15 +1,14 @@
-﻿@model List<proiectDAW.Models.Project>
+﻿@model HashSet<proiectDAW.Models.ApplicationUser>
 
 @{
-    ViewBag.Title = "Projects";
+    ViewBag.Title = "Team project";
     @Styles.Render("~/Content/slider.css")
 }
 
-<h2> My projects</h2>
-<h3>@ViewBag.edit</h3>
-<h3>@ViewBag.delete</h3>
-<h3>@ViewBag.access</h3>
+<h2>@ViewBag.Title</h2>
+<h3>@ViewBag.Access</h3>
 <div class="container">
+
     <div class="row">
         <div class="col-md-12">
             <div class="table-responsive">
@@ -19,29 +18,25 @@
                     <table id="mytable" class="table table-bordred table-hover panel">
 
                         <thead>
-                        <th>Project Name</th>
-                        <th>Organizer</th>
-                        <th>Start Date</th>
-                        <th>Deadline</th>
-                        <th>Status</th>
-                        <th>Edit</th>
-                        <th>View Team</th>
+                        <th>No.</th>
+                        <th>Email</th>
+                        <th>UserName</th>
+                        <th>Phone Number</th>
                         <th>Delete</th>
                         </thead>
                         <tbody>
                             @foreach (var element in Model)
                             {
-                            <tr class="table-row" data-href="@element.ProjectId">
-                                <td>@element.Name</td>
-                                <td>@element.Owner.Email</td>
-                                <td>@element.StartDate</td>
-                                <td>@element.Deadline</td>
-                                <td>@element.Status</td>
-                                <td><p><a  href="/Project/Edit/@element.ProjectId" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil"></span></a></p></td>
-                                <td><p><a   href="/Project/ViewTeam/@element.ProjectId" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-user"></span></a></p></td>
-                                <td><p data-placement="top" data-toggle="tooltip" title="Delete"><button id="@element.ProjectId" class="btn btn-danger btn-xs deleteButton" data-title="Delete" data-toggle="modal" data-target="#delete" data-id="@element.ProjectId"><span class="glyphicon glyphicon-trash"></span></button></p></td>
+                                var i = 1;
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@element.Email</td>
+                                    <td>@element.UserName</td>
+                                    <td>@element.PhoneNumber</td>
+                                    <td><p data-placement="top" data-toggle="tooltip" title="Delete"><button data-project="@ViewBag.ProjectId" id="@element.Id" class="btn btn-danger btn-xs deleteButton2" data-title="Delete" data-toggle="modal" data-target="#delete"><span class="glyphicon glyphicon-trash"></span></button></p></td>
 
-                            </tr>
+                                </tr>
+                                i++;
                             }
                         </tbody>
 
@@ -58,7 +53,17 @@
                         <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
                     </ul>
                 }
-                <a class="btn icon-btn btn-warning" href="/Project/New"><span class="glyphicon btn-glyphicon glyphicon-plus img-circle text-success"></span>Create Project</a>
+                    <h3>@ViewBag.Invite</h3>
+                    <h3>@ViewBag.Email</h3>
+                    <h3>@ViewBag.NoUser</h3>
+                    <h3>@ViewBag.Success</h3>
+                    <h3>@ViewBag.Already</h3>
+                    <h3>@ViewBag.AlreadyInvited</h3>
+                    <form method="post" action="/Project/@ViewBag.ProjectId/AddMember">
+                        <input name="member" type="text" class="form-control" style="display:inline;"/>
+                        <button class="btn icon-btn btn-warning" style="display:inline;"><span class="glyphicon btn-glyphicon glyphicon-plus img-circle text-success"></span>Add Member</button>
+                    </form>
+                
             </div>
 
         </div>
@@ -78,7 +83,7 @@
 
             </div>
             <div class="modal-footer ">
-                <form id="myForm" method="post" action="/Project/Delete/">
+                <form id="myForm2" method="post" action="/Project/@ViewBag.ProjectId/DeleteMember   /">
                     @Html.HttpMethodOverride(HttpVerbs.Delete)
                     <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span> Yes</button>
                 </form>

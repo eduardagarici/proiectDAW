@@ -175,6 +175,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InviteController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
@@ -201,8 +202,11 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\main_page_bg.jpg" />
     <Content Include="Content\Images\startup_page_bg.png" />
+    <Content Include="Content\invite.css" />
     <Content Include="Content\menu.css" />
+    <Content Include="Content\project.css" />
     <Content Include="Content\slider.css" />
+    <Content Include="Content\users.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -211,6 +215,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\home.js" />
+    <Content Include="Scripts\invite.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -222,6 +227,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\menu.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\project.js" />
+    <Content Include="Scripts\users.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -257,10 +264,15 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Project\Index.cshtml" />
+    <Content Include="Views\Project\New.cshtml" />
+    <Content Include="Views\Project\Edit.cshtml" />
+    <Content Include="Views\Project\ViewTeam.cshtml" />
+    <Content Include="Views\Invite\Index.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Users\" />
+    <Folder Include="Views\ProjectTask\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

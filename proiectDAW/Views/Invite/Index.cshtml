@@ -1,0 +1,145 @@
+﻿@model IEnumerable<proiectDAW.Models.Invite>
+@{
+    ViewBag.Title = "Index";
+    @Styles.Render("~/Content/invite.css")
+}
+
+<div class="container" style="margin-top:5%;">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <div class="mail-box">
+        <aside class="lg-side">
+            <div class="inbox-head">
+                <h3>My invites</h3>
+                <form action="/Invite/Index" class="pull-right position">
+                    <div class="input-append">
+                        <input name="searchParam" type="text" class="sr-input" placeholder="Search invite">
+                        <button type="submit" class="btn sr-btn"><i class="fa fa-search"></i></button>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="mail-option">
+                <table class="table table-inbox table-hover">
+                    <thead>
+                        <tr class="unread">
+                            <th class="col-sm-2 view-message  dont-show">Project Name</th>
+                            <th class="view-message col-sm-3">Organizer</th>
+                            <th> Invited</th>
+                            <th>Descripition</th>
+
+                            <th>
+                                <span>
+                                    Availability
+                                    <div>
+                                        <span class="label label-success pull-left"> </span>
+                                        <span class="label label-info pull-left"> </span>
+                                        <span class="label label-warning pull-left"> </span>
+                                        <span class="label label-danger pull-left"> </span>
+                                    </div>
+                                </span>
+                            </th>
+                            <th class="col-sm-1">Accept/Decline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var element in Model)
+                        {
+                        <tr class="table-row">
+                            <td>@element.Project.Name</td>
+                            <td>@element.Organizer.Email</td>
+                            <td>@element.Invited.Email</td>
+                            <td>@element.Project.Description</td>
+                            <td>
+                                @{ var days = Int32.Parse(DateTime.Now.Subtract(element.Date).Days.ToString()) + element.Availability;
+                                    if (days < 1)
+                                    {
+                                        <h4 style="margin-top: 5px;"><span class="label label-danger ">@days days</span></h4>
+                                    }
+                                    else if (days < 3)
+                                    {
+                                        <h4 style="margin-top: 5px;"><span class="label label-warning ">@days days</span></h4>
+                                    }
+                                    else if (days < 5)
+                                    {
+                                        <h4 style="margin-top: 5px;"><span class="label label-info ">@days days</span></h4>
+                                    }
+                                    else
+                                    {
+                                        <h4 style="margin-top: 5px;"><span class="label label-success ">@days days</span></h4>
+                                    }
+                                }
+                            </td>
+                            <td>
+
+                                <button type="submit" id ="@element.InviteId" class="btn btn-success btn-xs acceptButton" ; data-toggle="modal" data-target="#item_agree"><i class="glyphicon glyphicon-check"></i></button>
+                                <button type="submit" id ="@element.InviteId" class="btn btn-danger btn-xs declineButton" ; data-toggle="modal" data-target="#item_remove"><i class="glyphicon glyphicon-remove"></i></button>
+
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+    </div>
+    <div class="text-center">
+        <ul class="pagination">
+            <li class="disabled"><span>«</span></li>
+            <li class="active"><span>1</span></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li class="disabled"><span>...</span></li>
+            <li><a href="#">5</a></li>
+            <li><a href="#" rel="next">»</a></li>
+        </ul>
+    </div>
+</div>
+<div class="modal fade item_remove" id="item_agree">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" data-dismiss="modal" class="class pull-right"><span class="glyphicon glyphicon-remove"></span></a>
+                <h3 class="modal-title">Are you sure you want to accept the invite?</h3>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-12-xs text-center">
+                        <form id="myForm1" method="post" action="/Invite/Accept/">
+                            @Html.HttpMethodOverride(HttpVerbs.Delete)
+                            <button class="btn btn-success btn-md col-3-xs">Yes</button>
+                            <button class="btn btn-danger btn-md col-3-xs"> No</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade item_remove" id="item_remove">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" data-dismiss="modal" class="class pull-right"><span class="glyphicon glyphicon-remove"></span></a>
+                <h3 class="modal-title">Are you sure you want to decline the invite?</h3>
+            </div>
+            <div class="modal-body">
+                
+                <div class="row">
+                    <div class="col-12-xs text-center">
+                        <form id="myForm2" method="post" action="/Invite/Delete/">
+                            @Html.HttpMethodOverride(HttpVerbs.Delete)
+                            <button class="btn btn-success btn-md col-3-xs">Yes</button>
+                            <button class="btn btn-danger btn-md col-3-xs"> No</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/Scripts/invite.js")    
+}

@@ -28,12 +28,13 @@ namespace proiectDAW.Models
         public TaskPriority Priority { get; set; }
         [Required]
         public int ProjectId { get; set; }
-        public string OwnerId { get; set; }
+        public string UserId { get; set; }
 
-        [ForeignKey("ProjectId")]
+        [ForeignKey("UserId")]
+        public virtual ApplicationUser Owner { set; get; }
+
+
         public virtual Project Project { get; set; }
-        [ForeignKey("OwnerId")]
-        public virtual ApplicationUser Owner { get; set; }
         public virtual ICollection<ApplicationUser> AssignedMembers { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
     }
