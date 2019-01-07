@@ -13,6 +13,7 @@ namespace proiectDAW.Controllers
     {
         // GET: Task
         private ApplicationDbContext db = new ApplicationDbContext();
+        private UserManager<ApplicationUser> UserManager;
 
         private static bool IsValidEmailAddress(string emailAddress)
         {
@@ -40,7 +41,7 @@ namespace proiectDAW.Controllers
             Project pt = new Project();
             pt.Name = "ProiectNou";
             pt.ProjectId = 1000;
-            pt.OwnerId = User.Identity.GetUserId();
+            pt.UserId = User.Identity.GetUserId();
             var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
             ApplicationUser currentUser = UserManager.FindById(User.Identity.GetUserId());
             pt.TeamMembers = new HashSet<ApplicationUser>();
@@ -65,7 +66,7 @@ namespace proiectDAW.Controllers
         {
             var id = User.Identity.GetUserId();
             var tasks = from task in db.Tasks
-                        where task.OwnerId == id
+                        where task.UserId == id
                         orderby task.Status
                         select task;
             List<ProjectTask> taskList = new List<ProjectTask>(tasks);
@@ -81,18 +82,16 @@ namespace proiectDAW.Controllers
         [HttpPost]
         public ActionResult New(int id, ProjectTask task)
         {
+            
             Project currentProject = db.Projects.Find(id);
-            if (currentProject.OwnerId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
+            if (currentProject.UserId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
                 try
                 {
                     //ViewBag.ProjectId = db.Projects;
                     task.PostDate = DateTime.Now;
                     task.ProjectId = id;
                     task.Status = 0;
-                    task.OwnerId = User.Identity.GetUserId();
-
-
-
+                    task.UserId = User.Identity.GetUserId();
                     Project prj = db.Projects.Find(id);
                     prj.Tasks.Add(task);
 
@@ -143,14 +142,15 @@ namespace proiectDAW.Controllers
         [HttpDelete]
         public ActionResult Delete(int id)
         {
-            ProjectTask currentProjectTask = db.Tasks.Find(id);
-            Project currentProject = db.Projects.Find(currentProjectTask.ProjectId);
-            if (currentProject.UserId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
+            UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            ProjectTask projectTask = db.Tasks.Find(id);
+            Project project = db.Projects.Find(projectTask.ProjectId);
+            var user = UserManager.FindById(projectTask.UserId);
+            if (project.UserId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
             {
-                ProjectTask task = db.Tasks.Find(id);
-                Project projTaskDelete = db.Projects.Find(task.ProjectId);
-                projTaskDelete.Tasks.Remove(task);
-                db.Tasks.Remove(task);
+                user.Tasks.Remove(projectTask);
+                project.Tasks.Remove(projectTask);
+                db.Tasks.Remove(projectTask);
                 db.SaveChanges();
                 return RedirectToAction("Show/" + Session["projectId"], "Project");
             }

@@ -172,6 +172,19 @@ namespace proiectDAW.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Member,Organizer,Administrator")]
+        [HttpGet]
+        public ActionResult Show(int id)
+        {
+            Session["projectName"] = db.Projects.Find(id).Name;
+            Session["projectId"] = id;
+            var proj = db.Tasks;
+            var tasks = (from p in proj
+                         where p.ProjectId == id
+                         select p).ToList();
+            return View(tasks);
+        }
+
         [Authorize(Roles = "Organizer,Administrator")]
         public ActionResult ViewTeam(int id)
         {
@@ -280,48 +293,22 @@ namespace proiectDAW.Controllers
                 {
                     TempData["email"] = "Invalid email";
                     return RedirectToAction("ViewTeam", new { id = projectId });
+
                 }
             }
-}
-
-        [Authorize(Roles = "Member,Organizer,Administrator")]
-        [HttpGet]
-        public ActionResult Show(int id)
-        {
-            Session["projectName"] = db.Projects.Find(id).Name;
-            Session["projectId"] = id;
-            var proj = db.Tasks;
-            var tasks = (from p in proj
-                         where p.ProjectId == id
-                         select p).ToList();
-            return View(tasks);
-        }
-    }
-}
             catch (Exception e)
             {
 
             }
             return RedirectToAction("ViewTeam", new { id = projectId });
         }
-    [Authorize(Roles = "Member,Organizer,Administrator")]
-[HttpGet]
-public ActionResult Show(int id)
-{
-    Session["projectName"] = db.Projects.Find(id).Name;
-    Session["projectId"] = id;
-    var proj = db.Tasks;
-    var tasks = (from p in proj
-                 where p.ProjectId == id
-                 select p).ToList();
-    return View(tasks);
-}
-[NonAction]
-private static bool IsValidEmailAddress(string emailAddress)
-{
-    return new System.ComponentModel.DataAnnotations
-                        .EmailAddressAttribute()
-                        .IsValid(emailAddress);
-}
+        [NonAction]
+        private static bool IsValidEmailAddress(string emailAddress)
+        {
+            return new System.ComponentModel.DataAnnotations
+                                .EmailAddressAttribute()
+                                .IsValid(emailAddress);
+        }
     }
 }
+

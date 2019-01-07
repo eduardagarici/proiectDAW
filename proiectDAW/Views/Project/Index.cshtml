@@ -31,7 +31,7 @@
                         <tbody>
                             @foreach (var element in Model)
                             {
-                            <tr class="table-row" data-href="@element.ProjectId">
+                            <tr id="@element.ProjectId" class="table-row">
                                 <td>@element.Name</td>
                                 <td>@element.Owner.Email</td>
                                 <td>@element.StartDate</td>
