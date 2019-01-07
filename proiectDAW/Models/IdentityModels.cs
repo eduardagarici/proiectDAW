@@ -43,7 +43,7 @@ namespace proiectDAW.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             //Configure default schema
-            base.OnModelCreating(modelBuilder);
+              base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Project>()
                 .HasRequired(n => n.Owner)
                 .WithMany(a => a.Projects)

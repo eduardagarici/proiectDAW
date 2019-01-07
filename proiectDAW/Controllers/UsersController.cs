@@ -13,30 +13,39 @@ namespace proiectDAW.Controllers
     public class UsersController : Controller
     {
         private ApplicationDbContext db = ApplicationDbContext.Create();
+        private UserManager<ApplicationUser> UserManager;
+  
         // GET: Users
- 
+
         public ActionResult Index()
         {
+            UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
             var users = from user in db.Users
                         orderby user.UserName
                         select user;
             List<string> roles = new List<string>();
             foreach (var user in users)
             {
-                roles.Add(user.Roles.FirstOrDefault().ToString());
+                roles.Add(UserManager.GetRoles(user.Id)[0]);
             }
             ViewBag.Roles = roles;
+            if (TempData.ContainsKey("yourself"))
+                ViewBag.Yourslef = TempData["yourself"];
             return View(users.ToList());
         }
 
         public ActionResult Edit(string id)
         {
             ApplicationUser user = db.Users.Find(id);
-            user.AllRoles = GetAllRoles();
-            var userRole = user.Roles.FirstOrDefault();
-            ViewBag.userRole = userRole.RoleId;
+            UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            // user.AllRoles = GetAllRoles();
+            //var userRole = user.Roles.FirstOrDefault();
+            //ViewBag.userRole = userRole.RoleId;
+            ViewBag.userRoleName = UserManager.GetRoles(user.Id)[0];
             return View(user);
         }
+
+
         [NonAction]
         public IEnumerable<SelectListItem> GetAllRoles()
         {
@@ -54,7 +63,7 @@ namespace proiectDAW.Controllers
         }
 
         [HttpPut]
-        public ActionResult Edit(string id, ApplicationUser newData)
+        public ActionResult Edit(string id, ApplicationUser newData, string selectedRole)
         {
 
             ApplicationUser user = db.Users.Find(id);
@@ -63,26 +72,28 @@ namespace proiectDAW.Controllers
             ViewBag.userRole = userRole.RoleId;
             try
             {
-                ApplicationDbContext context = new ApplicationDbContext();
+             
                 var roleManager = new RoleManager<IdentityRole>(new
-               RoleStore<IdentityRole>(context));
+               RoleStore<IdentityRole>(db));
                 var UserManager = new UserManager<ApplicationUser>(new
-               UserStore<ApplicationUser>(context));
+               UserStore<ApplicationUser>(db));
 
-                if (TryUpdateModel(user))
+                if (ModelState.IsValid)
                 {
-                    user.UserName = newData.UserName;
-                    user.Email = newData.Email;
-                    user.PhoneNumber = newData.PhoneNumber;
-                    var roles = from role in db.Roles select role;
-                    foreach (var role in roles)
+                    if (TryUpdateModel(user))
                     {
-                        UserManager.RemoveFromRole(id, role.Name);
+                        user.UserName = newData.UserName;
+                        user.Email = newData.Email;
+                        user.PhoneNumber = newData.PhoneNumber;
+                        var roles = from role in db.Roles select role;
+                        foreach (var role in roles)
+                        {
+                            UserManager.RemoveFromRole(id, role.Name);
+                        }
+                        //var selectedRole =  db.Roles.Find(HttpContext.Request.Params.Get("selectedRole"));
+                        UserManager.AddToRole(id, selectedRole);
+                        db.SaveChanges();
                     }
-                    var selectedRole =
-                    db.Roles.Find(HttpContext.Request.Params.Get("newRole"));
-                    UserManager.AddToRole(id, selectedRole.Name);
-                    db.SaveChanges();
                 }
                 return RedirectToAction("Index");
             }
@@ -94,6 +105,27 @@ namespace proiectDAW.Controllers
 
         }
 
-
+        [HttpDelete]
+        public ActionResult Delete(string id)
+        {
+            if(id == User.Identity.GetUserId())
+            {
+                TempData["yourself"] = "You can not delete your own user";
+                return RedirectToAction("Index");
+            }
+            UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            var user = UserManager.FindById(id);
+            foreach(var project in user.Projects)
+            {
+                project.TeamMembers.Remove(user);
+            }
+            foreach(var task in user.Tasks)
+            {
+                task.AssignedMembers.Remove(user);
+            }
+            db.Users.Remove(user);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }
