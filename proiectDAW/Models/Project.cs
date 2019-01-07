@@ -32,7 +32,7 @@ namespace proiectDAW.Models
 
         [ForeignKey("OwnerId")]
         public virtual ApplicationUser Owner { get; set; }
-        public virtual ICollection<ApplicationUser> TeamMembers { get; set; }
+        public virtual HashSet<ApplicationUser> TeamMembers { get; set; }
         public virtual ICollection<ProjectTask> Tasks { get; set; }
         public virtual ICollection<Invite> Invites { get; set; }
     }

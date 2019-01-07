@@ -50,6 +50,18 @@ namespace proiectDAW.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Member,Organizer,Administrator")]
+        [HttpGet]
+        public ActionResult Show(int id)
+        {
+            Session["projectName"] = db.Projects.Find(id).Name;
+            Session["projectId"] = id;
+            var proj = db.Tasks;
+            var tasks = (from p in proj
+                          where p.ProjectId == id
+                          select p).ToList();
+            return View(tasks);
+        }
 
     }
 }
