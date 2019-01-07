@@ -280,6 +280,9 @@ namespace proiectDAW.Controllers
                 {
                     TempData["email"] = "Invalid email";
                     return RedirectToAction("ViewTeam", new { id = projectId });
+                }
+            }
+}
 
         [Authorize(Roles = "Member,Organizer,Administrator")]
         [HttpGet]

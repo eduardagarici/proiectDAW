@@ -120,7 +120,7 @@ namespace proiectDAW.Controllers
         {
             ProjectTask currentProjectTask = db.Tasks.Find(id);
             Project currentProject = db.Projects.Find(currentProjectTask.ProjectId);
-            if (currentProject.OwnerId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
+            if (currentProject.UserId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
                 try
                 {
                     ProjectTask task = db.Tasks.Find(id);
@@ -145,7 +145,7 @@ namespace proiectDAW.Controllers
         {
             ProjectTask currentProjectTask = db.Tasks.Find(id);
             Project currentProject = db.Projects.Find(currentProjectTask.ProjectId);
-            if (currentProject.OwnerId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
+            if (currentProject.UserId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
             {
                 ProjectTask task = db.Tasks.Find(id);
                 Project projTaskDelete = db.Projects.Find(task.ProjectId);
@@ -162,7 +162,7 @@ namespace proiectDAW.Controllers
         {
             ProjectTask currentProjectTask = db.Tasks.Find(id);
             Project currentProject = db.Projects.Find(currentProjectTask.ProjectId);
-            if (currentProject.OwnerId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
+            if (currentProject.UserId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
             {
                 ViewBag.TaskID = id;
                 if (TempData.ContainsKey("validEmail"))
