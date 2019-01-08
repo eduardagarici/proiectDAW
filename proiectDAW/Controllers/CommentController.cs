@@ -22,7 +22,23 @@ namespace proiectDAW.Controllers
         {
             Session["taskId"] = id;
             ProjectTask currentTask = db.Tasks.Find(id);
-            ViewBag.Comments = currentTask.Comments;
+            
+
+            List<CommentPrinter> printer = new List<CommentPrinter>();
+            foreach(Comment comm in currentTask.Comments)
+            {
+                CommentPrinter obj = new CommentPrinter();
+                obj.CommentId = comm.CommentId;
+                obj.LastUpdateDate = comm.LastUpdateDate;
+                obj.Text = comm.Text;
+                ApplicationUser appUser = db.Users.Find(comm.UserId);
+                obj.UserName = appUser.UserName;
+                printer.Add(obj);
+            }
+            ViewBag.Comments = printer;
+
+            if (TempData.ContainsKey("noPerm"))
+                ViewBag.noPermission = TempData["noPerm"];
             return View();
         }
         public ActionResult New()
@@ -54,8 +70,15 @@ namespace proiectDAW.Controllers
         }
         public ActionResult Edit(int id)
         {
+
             Comment comm = db.Comments.Find(id);
-            return View(comm);
+            if (comm.UserId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
+                return View(comm);
+            else
+            {
+                TempData["noPerm"] = "No permission to modify other member's comment";
+                return RedirectToAction("Show/" + Session["taskId"], "Comment");
+            }
         }
 
         [HttpPut]
@@ -77,18 +100,25 @@ namespace proiectDAW.Controllers
             {
                 return View();
             }
-         
+
         }
         [HttpDelete]
         public ActionResult Delete(int id)
         {
             Comment comm = db.Comments.Find(id);
             ProjectTask projectTask = db.Tasks.Find(comm.TaskId);
+            if (comm.UserId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
+            {
                 projectTask.Comments.Remove(comm);
                 db.Comments.Remove(comm);
                 db.SaveChanges();
                 return RedirectToAction("Show/" + Session["taskId"], "Comment");
-            
+            }
+            else
+            {
+                TempData["noPerm"] = "No permission to delete other member's comment";
+                return RedirectToAction("Show/" + Session["taskId"], "Comment");
+            }
         }
     }
 }
