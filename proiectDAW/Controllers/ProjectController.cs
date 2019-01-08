@@ -266,8 +266,10 @@ namespace proiectDAW.Controllers
                     foreach (var inv in project.Invites)
                     {
                         if (inv.Invited == invitedMember)
+                        {
                             TempData["alreadyInvited"] = "The provided person is already invited in the project";
-                        return RedirectToAction("ViewTeam", new { id = projectId });
+                            return RedirectToAction("ViewTeam", new { id = projectId });
+                        }
                     }
 
                     if (invitedMember == null)

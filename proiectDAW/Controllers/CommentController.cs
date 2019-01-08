@@ -20,26 +20,36 @@ namespace proiectDAW.Controllers
 
         public ActionResult Show(int id)
         {
+
+            
             Session["taskId"] = id;
             ProjectTask currentTask = db.Tasks.Find(id);
-            
 
-            List<CommentPrinter> printer = new List<CommentPrinter>();
-            foreach(Comment comm in currentTask.Comments)
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = db.Users.FirstOrDefault(x => x.Id == currentUserId);
+
+            if (currentTask.AssignedMembers.Contains(currentUser) || User.IsInRole("Administrator") )
             {
-                CommentPrinter obj = new CommentPrinter();
-                obj.CommentId = comm.CommentId;
-                obj.LastUpdateDate = comm.LastUpdateDate;
-                obj.Text = comm.Text;
-                ApplicationUser appUser = db.Users.Find(comm.UserId);
-                obj.UserName = appUser.UserName;
-                printer.Add(obj);
-            }
-            ViewBag.Comments = printer;
+                List<CommentPrinter> printer = new List<CommentPrinter>();
+                foreach (Comment comm in currentTask.Comments)
+                {
+                    CommentPrinter obj = new CommentPrinter();
+                    obj.CommentId = comm.CommentId;
+                    obj.LastUpdateDate = comm.LastUpdateDate;
+                    obj.Text = comm.Text;
+                    ApplicationUser appUser = db.Users.Find(comm.UserId);
+                    obj.UserName = appUser.UserName;
+                    printer.Add(obj);
+                }
+                ViewBag.Comments = printer;
 
-            if (TempData.ContainsKey("noPerm"))
-                ViewBag.noPermission = TempData["noPerm"];
-            return View();
+                if (TempData.ContainsKey("noPerm"))
+                    ViewBag.noPermission = TempData["noPerm"];
+                return View();
+            }
+            else
+                return RedirectToAction("Show/" + Session["projectId"], "Project");
+
         }
         public ActionResult New()
         {
